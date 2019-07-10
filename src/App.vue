@@ -21,7 +21,7 @@
     </nav>
 
     <main>
-      <p>Информация по оплате:</p>
+      <p class="pay-info">Информация по оплате:</p>
       <p>Номер счета:</p>
       <p>Сумма платежа:</p>
       <h2>Данные банковской карты</h2>
@@ -52,6 +52,29 @@
           <input class="name-user" type="text" placeholder="Держатель карты" />
         </form>
       </div>
+      <div class="cvv">
+        <div class="line"></div>
+        <div class="input_cvv">
+          <label for="cvv">Код CVV2 / CVC2</label>
+          <input type="text" placeholder="000" name="cvv" id="cvv" />
+        </div>
+      </div>
+      <div class="btn-wrapper">
+        <a class="btn">Оплатить</a>
+      </div>
+      <footer>
+        <p>
+          Исходя из астатической системы координат Булгакова, соединение стабильно.
+          Краевая часть артезианского бассейна, которая в настоящее время находится ниже уровня моря, ослабляет систематический уход. Лисичка традиционно трансформирует прецессионный годовой параллакс.
+        </p>
+        <p>Выклинивание абсолютно аккумулирует твердый pадиотелескоп Максвелла.</p>
+        <p>Алмаз слагает горст. Делювий длительно колеблет лазерный подвижный объект.</p>
+
+        <p>
+          Устойчивость, например, параллельна. Аргумент перигелия определяет боксит. Проекция
+          вертикально дает уходящий диабаз. Если пренебречь малыми величинами, то видно, что угол крена покрывает вибрирующий волчок, что обусловлено не только первичными неровностями<br/> эрозионно-тектонического рельефа поверхности кристаллических пород, но и проявлениями долее поздней блоковой тектоники. Засветка неба заставляет иначе взглянуть на то, что такое волчок.
+        </p>
+      </footer>
     </main>
   </div>
 </template>
@@ -67,7 +90,13 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
+
   background-color: #101114;
+  color: #bec6cf;
+  font-family: "Arial MT";
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 21px;
 }
 
 .container {
@@ -103,15 +132,25 @@ ul {
 }
 
 main {
+  position: relative;
   padding-top: 50px;
   padding-left: 26px;
-  padding-bottom: 28px;
+
   padding-right: 29px;
+  margin-bottom: 45px;
   font-family: "Arial MT";
   color: #8494ab;
 
   background-color: #f7f8f8;
   width: 639px / 960px * 100%;
+
+  .pay-info {
+    margin-bottom: 25px;
+  }
+  p {
+    margin: 0px;
+  }
+
   h2 {
     font-family: "Open San";
     color: #383d43;
@@ -151,10 +190,13 @@ main {
 
   .cards {
     border: 1px solid #e4e9ee;
-    border-radius: 5px;
+    border-radius: 10px;
     padding: 25px 15px 14px;
-
+    z-index: 3;
     width: 350px;
+    margin-bottom: 40px;
+    position: relative;
+    background: #f7f8f8;
   }
   .select {
     color: #373c43;
@@ -197,10 +239,10 @@ main {
     position: relative;
     &::before {
       content: "";
-      width: 6px;
+      width: 7px;
       height: 8px;
       top: calc(50% - 4px);
-      left: 87%;
+      left: 86%;
 
       position: absolute;
       background-color: white;
@@ -225,7 +267,7 @@ main {
     padding-left: 12px;
     padding-bottom: 11px;
     padding-right: 10px;
-
+    border: 1px solid #e4e9ee;
     &::placeholder {
       color: #bec6cf;
       font-family: "Arial MT";
@@ -241,8 +283,94 @@ main {
 }
 .cvv {
   width: 370px;
+  padding-top: 46px;
+  position: absolute;
+  z-index: 1;
+  top: 275px;
+  left: 223px;
   height: 236px;
   border: 1px solid #e4e9ee;
   background-color: #f7f8f8;
+  border-radius: 10px;
+  .line {
+    width: 100%;
+    height: 42px;
+
+    background-color: #e4e9ee;
+  }
+  .input_cvv {
+    padding-top: 19px;
+    margin-left: 200px;
+    label {
+      position: relative;
+      margin-bottom: 5px;
+      &::after {
+        content: "";
+        display: block;
+        width: 26px;
+        height: 26px;
+        position: absolute;
+        top: 28px;
+        left: 85%;
+        background: url("/advice.png");
+      }
+    }
+    input {
+      width: 138px;
+      height: 42px;
+      border: 1px solid #e4e9ee;
+      background-color: #ffffff;
+      padding: 20px;
+      padding-right: 40px;
+      &::placeholder {
+        color: #bec6cf;
+        font-family: "Arial MT";
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 21px;
+      }
+    }
+  }
+}
+.btn-wrapper {
+  margin-bottom: 45px;
+  margin-left: 15px;
+}
+.btn {
+  display: block;
+  width: 133px;
+  height: 40px;
+  color: #ffffff;
+  text-align: center;
+  padding: 10px 10px;
+  font-family: "Open Sans";
+  font-size: 14px;
+  font-weight: 700;
+
+  border-radius: 20px;
+  background-color: #005abf;
+  background-image: linear-gradient(
+    to top,
+    rgba(37, 36, 35, 0.18) 0%,
+    rgba(37, 36, 35, 0) 100%
+  );
+}
+footer {
+  margin-left: -26px;
+  padding: 26px 35px 33px 25px;
+  font-family: "Arial MT";
+  font-size: 12px;
+  line-height: 18px;
+  color: #89909d;
+
+  width: 639px;
+  height: 263px;
+  background-color: #373c43;
+  margin-bottom: -45px;
+  p {
+    margin-right: 60px;
+    text-align: left;
+    margin-bottom: 15px;
+  }
 }
 </style>
