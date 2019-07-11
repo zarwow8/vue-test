@@ -5,13 +5,13 @@
         <a>Личный кабинет</a>
       </li>
 
-      <router-link tag="li" active-class="active-link" to="/">
+      <router-link tag="li" exact active-class="active-link" to="/">
         <a>Платежи</a>
       </router-link>
 
-      <li>
+      <router-link tag="li" active-class="active-link" to="/history">
         <a>История платежей</a>
-      </li>
+      </router-link>
       <li>
         <a>Настройки</a>
       </li>
@@ -51,6 +51,14 @@ ul {
     padding-top: 28px;
     list-style-type: none;
   }
+}
+
+a:visited {
+  color: inherit;
+  text-decoration: none;
+}
+a:link {
+  text-decoration: none;
 }
 
 .active-link {

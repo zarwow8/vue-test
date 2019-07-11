@@ -3,50 +3,84 @@
     <p class="pay-info">Информация по оплате:</p>
     <p>
       Номер счета:
-      <input type="text" class="number" placeholder="Введите номер счета" />
+      <input
+        type="text"
+        class="number"
+        v-model.trim.lazy="$v.numberInvoice.$model"
+        placeholder="Введите номер счета"
+        :style="{border: $v.numberInvoice.$error ? '1px solid red' : ''}"
+      />
     </p>
     <p>
       Сумма платежа:
-      <input type="text" class="summa" placeholder="Введите сумму платежа" />
+      <input
+        type="text"
+        class="summa"
+        placeholder="Введите сумму платежа"
+        v-model.trim.lazy="$v.sum.$model"
+        :style="{border: $v.sum.$error ? '1px solid red' : ''}"
+      /> руб.
     </p>
     <h2>Данные банковской карты</h2>
 
     <div class="cards">
-      <form>
-        <fieldset>
-          <legend>Номер карты</legend>
-          <input placeholder="0000" type="text" />
-          <input placeholder="0000" type="text" />
-          <input placeholder="0000" type="text" />
-          <input placeholder="0000" type="text" />
-        </fieldset>
-        <fieldset class="select-list">
-          <legend>Срок действия</legend>
-          <div class="select-wrapper1">
-            <select class="select">
-              <option default>04</option>
-            </select>
-          </div>
-          <div class="select-wrapper2">
-            <select class="select">
-              <option default>2018</option>
-            </select>
-          </div>
-        </fieldset>
+      <form @submit.prevent="submit">
+        <div class="card-1">
+          <fieldset>
+            <legend>Номер карты</legend>
+            <input
+              v-for="(v, index) in $v.numberCard.$each.$iter"
+              :key="index"
+              v-model.trim.lazy="v.part.$model"
+              :style="{border: v.part.$error ? '1px solid red' : ''}"
+              placeholder="0000"
+              type="text"
+            />
+          </fieldset>
+          <fieldset class="select-list">
+            <legend>Срок действия</legend>
+            <div :style="{border: $v.month.$error ? '1px solid red' : ''}" class="select-wrapper1">
+              <select v-model="$v.month.$model" class="select">
+                <option default value="01">01</option>
+                <option :key="index" v-for="(item, index) in months">{{ item }}</option>
+              </select>
+            </div>
+            <div :style="{border: $v.year.$error ? '1px solid red' : ''}" class="select-wrapper2">
+              <select v-model="$v.year.$model" class="select">
+                <option default value="2018">2018</option>
+                <option :key="index" v-for="(item, index) in years">{{item}}</option>
+              </select>
+            </div>
+          </fieldset>
 
-        <input class="name-user" type="text" placeholder="Держатель карты" />
+          <input
+            v-model.trim.lazy="$v.nameUser.$model"
+            class="name-user"
+            type="text"
+            placeholder="Держатель карты"
+            :style="{border: $v.nameUser.$error ? '1px solid red' : ''}"
+          />
+        </div>
+        <div class="cvv">
+          <div class="line"></div>
+          <div class="input_cvv">
+            <label for="cvv">Код CVV2 / CVC2</label>
+            <input
+              type="text"
+              v-model.trim.lazy="$v.cvvCode.$model"
+              :style="{border: $v.cvvCode.$error ? '1px solid red' : ''}"
+              placeholder="000"
+              name="cvv"
+              id="cvv"
+            />
+          </div>
+        </div>
+        <div class="btn-wrapper">
+          <input type="submit" value="Оплатить" class="btn" />
+        </div>
       </form>
     </div>
-    <div class="cvv">
-      <div class="line"></div>
-      <div class="input_cvv">
-        <label for="cvv">Код CVV2 / CVC2</label>
-        <input type="text" placeholder="000" name="cvv" id="cvv" />
-      </div>
-    </div>
-    <div class="btn-wrapper">
-      <a href="#" class="btn">Оплатить</a>
-    </div>
+
     <footer>
       <p>
         Исходя из астатической системы координат Булгакова, соединение стабильно.
@@ -65,7 +99,87 @@
 </template>
 
 <script>
-export default {};
+import {
+  required,
+  numeric,
+  minLength,
+  maxLength
+} from "vuelidate/lib/validators";
+import { helpers } from "vuelidate/lib/validators";
+const alpha = helpers.regex("alpha", /^[a-zA-Z_ ]*$/);
+
+export default {
+  data() {
+    return {
+      numberInvoice: null,
+      sum: null,
+      numberCard: [
+        {
+          part: null
+        },
+        {
+          part: null
+        },
+        {
+          part: null
+        },
+        {
+          part: null
+        }
+      ],
+      cvvCode: null,
+      month: "01",
+      year: 2018,
+      nameUser: "",
+      months: ["02", "03", "05", "06", "07", "08", "09", "10", "11", "12"],
+      years: [2019, 2020, 2022]
+    };
+  },
+  methods: {
+    submit() {
+      if (this.$v.$invalid) {
+        console.log("false");
+      } else {
+        const obj = {
+          date: new Date(),
+          sum: this.sum,
+          numberInvoice: this.numberInvoice
+        };
+        this.$store.commit("addPay", obj);
+        this.$router.push({ name: "success", params: { success: true } });
+      }
+    }
+  },
+  validations: {
+    numberInvoice: { required, numeric },
+    sum: { required, numeric },
+    nameUser: { required, alpha, minLength: minLength(4) },
+    numberCard: {
+      required,
+
+      $each: {
+        part: {
+          required,
+          minLength: minLength(4),
+          numeric,
+          maxLength: maxLength(4)
+        }
+      }
+    },
+    cvvCode: {
+      required,
+      numeric,
+      minLength: minLength(3),
+      maxLength: maxLength(3)
+    },
+    month: {
+      required
+    },
+    year: {
+      required
+    }
+  }
+};
 </script>
 
 
@@ -127,16 +241,16 @@ main {
     }
   }
 
-  .cards {
-    border: 1px solid #e4e9ee;
-    border-radius: 10px;
-    padding: 25px 15px 14px;
-    z-index: 3;
-    width: 350px;
-    margin-bottom: 40px;
-    position: relative;
-    background: #f7f8f8;
-  }
+  //   .cards {
+  //     border: 1px solid #e4e9ee;
+  //     border-radius: 10px;
+  //     padding: 25px 15px 14px;
+  //     z-index: 3;
+  //     width: 350px;
+  //     margin-bottom: 40px;
+  //     position: relative;
+  //     background: #f7f8f8;
+  //   }
   .select {
     color: #373c43;
     font-family: "Arial MT";
@@ -202,7 +316,7 @@ main {
   }
   .name-user {
     width: 100%;
-    padding-top: 15px;
+    padding-top: 14px;
     padding-left: 12px;
     padding-bottom: 11px;
     padding-right: 10px;
@@ -216,16 +330,27 @@ main {
     }
   }
   .select-list {
-    margin-top: 37px;
+    margin-top: 15px;
     margin-bottom: 12px;
   }
 }
+.card-1 {
+  height: 236px;
+  border: 1px solid #e4e9ee;
+  border-radius: 10px;
+  padding: 20px 15px 14px;
+  z-index: 3;
+  width: 350px;
+  margin-bottom: 40px;
+  position: relative;
+  background: #f7f8f8;
+}
 .cvv {
   width: 370px;
-  padding-top: 46px;
+  padding-top: 26px;
   position: absolute;
   z-index: 1;
-  top: 275px;
+  top: 235px;
   left: 223px;
   height: 236px;
   border: 1px solid #e4e9ee;
@@ -238,7 +363,7 @@ main {
     background-color: #e4e9ee;
   }
   .input_cvv {
-    padding-top: 19px;
+    padding-top: 23px;
     margin-left: 200px;
     label {
       position: relative;
@@ -279,6 +404,8 @@ main {
   display: block;
   width: 133px;
   height: 40px;
+  outline: none;
+  border: none;
   text-decoration: none;
   color: #ffffff;
   text-align: center;

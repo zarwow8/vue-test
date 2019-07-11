@@ -46,7 +46,7 @@ body {
   padding-top: 80px;
   width: 960px;
   align-items: flex-start;
-
+  height: 100%;
   margin: 0 auto;
 }
 </style>
